@@ -1,0 +1,14 @@
+{
+   "eventType":"CheckOutEvent",
+   "Event":{
+		"userId":"u1",
+		"orgId":"org1",
+		"storeid":"s1",
+		"cart":[
+			{"productId":"p1","quantity":2,"price":10},
+			{"productId":"p2","quantity":1,"price":12.4},
+			{"productId":"p3","quantity":3,"price":20}
+		],
+		"checkOuttime":"2016-11-11 11:10:10"	
+	   }
+}

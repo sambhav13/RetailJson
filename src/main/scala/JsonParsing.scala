@@ -1,9 +1,13 @@
 import java.sql.Timestamp
 
 import org.json4s._
-import org.json4s.native.JsonMethods._
-import scala.util.parsing.json.JSON
+//import org.json4s.native.JsonMethods._
+//import scala.util.parsing.json.JSON
 import java.text.SimpleDateFormat
+
+import org.json4s._
+import org.json4s.JsonDSL._
+import org.json4s.jackson.JsonMethods._
 
 class JsonParsing {
   
@@ -53,15 +57,13 @@ object JsonParsing{
                       		"orgId":"org1",
                       		"storeId":"s1",
                       		"cart":[
-                      			{"productId":"p1","quantity":"2","price":"10"},
-                      			{"productId":"p2","quantity":"1","price":"12.4"},
-                      			{"productId":"p3","quantity":"3","price":"20"}
-                      		],
+                      		{"productId":"p1","quantity":"2","price":"10"}],
+                      			
                       		"checkOutTime":"2016-11-11 11:10:10"	
                       	   }
                       }  """
     
-    val interimMsg = JSON.parseFull(storeEvent).get.asInstanceOf[Map[String,String]]
+    val interimMsg = scala.util.parsing.json.JSON.parseFull(storeEvent).get.asInstanceOf[Map[String,String]]
     
     val eventType = interimMsg.get("eventType").getOrElse("nothing")
     
@@ -81,9 +83,15 @@ object JsonParsing{
         
       case "CheckOutEvent" =>
                               val str = scala.util.parsing.json.JSONObject(event).toString()
-                              val obj = parse(str).extract[CheckOutEvent]
-                              println(obj.orgId)
-                              println(obj.userId)
+                             println(str)
+                              val obj = parse(storeEvent)
+                              println(obj \ "Event" \ "cart")
+                           //  val messagesIds = (obj \ "cart") \ "productId"
+                              //println(messageIds.values)
+                              
+                              //extract[CheckOutEvent]
+                              //println(obj.orgId)
+                              //println(obj.userId)
     }
     
      /*val Value =  parse(storeEvent).extract[LocationEvent]
