@@ -74,7 +74,18 @@ object RetailJsonStream{
 		
 		import spark.implicits._
 		val locData = locationRDD.map(x =>  { val data = parseLocEvent(x)	;data.Event})
-	val df = locData.as[Event2]
+		
+		//locData.map { x => x. }
+		
+		val table = locData.createOrReplaceTempView("LocationEvent")
+						//spark.sqlContext.cacheTable("person")
+		val last = spark.sql("select userId,orgId,count(rackId) from LocationEvent group by userId,orgId")
+		
+		
+/*	val df = locData.as[LocationEvent]
+		
+		//val orgID = df.select($"orgId")
+		//val deviceEventsDS = ds.select($"device_name", $"cca3", $"c02_level").where($"c02_level" > 1300)
 
 		//val checkOutData = checkOutRDD.map(x => parseLocEvent(x))
 		
@@ -86,9 +97,9 @@ object RetailJsonStream{
 		val table = locData.createOrReplaceTempView("Event2")
 		//spark.sqlContext.cacheTable("person")
 
-		val last = spark.sql("select id,max(age) from person group by id")
+		val last = spark.sql("select id,max(age) from person group by id")*/
 						
-		val query = locData.writeStream
+		val query = last.writeStream
 						.outputMode("complete")
 						.format("console")
 						.start()

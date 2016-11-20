@@ -49,7 +49,7 @@ object TimestampCheck{
      //df.as[UserTransaction,Encoders
      
      val ds:Dataset[UserTransaction] = df.as[UserTransaction]
-     
+    
      val sqlContext = spark.sqlContext
     //import sqlContext.implicits._
     //import UserEncoders._

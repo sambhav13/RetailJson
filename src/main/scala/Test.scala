@@ -44,16 +44,6 @@ object Test{
 
 						val table = userDS.createOrReplaceTempView("person")
 						//spark.sqlContext.cacheTable("person")
-
-						
-
-						
-
-
-						
-
-
-
 						val last = spark.sql("select id,max(age) from person group by id")
 						
 						val query = last.writeStream
