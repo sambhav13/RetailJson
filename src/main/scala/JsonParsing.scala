@@ -23,14 +23,21 @@ object JsonParsing{
                            val time:Timestamp)
   
                            
-  case class CheckOutEvent(val userId:String,
+  /*case class CheckOutEvent(val userId:String,
                            val orgId:String,
                            val storeId:String,
                            val cart:Seq[Map[String,Int]],
                            val checkOutTime:Timestamp  
-                          )
-                     
-  case class Cart(val items:Seq[Any])
+                          )*/
+                          
+  case class CheckOutEvent(val userId:String,
+                           val orgId:String,
+                           val storeId:String,
+                           val cart:List[Cart],
+                           val checkOutTime:Timestamp  
+                          )                          
+  case class Cart(val productId:String,val quantity:String,val price:String)
+  //case class Cart(val items:Seq[Any])
   
   
   def main(args:Array[String]) = {
@@ -85,7 +92,7 @@ object JsonParsing{
                               println(obj.time)
         
       case "CheckOutEvent" =>
-                              val str = scala.util.parsing.json.JSONObject(event).toString()
+                            /*  val str = scala.util.parsing.json.JSONObject(event).toString()
                              println(str)
                               val obj = parse(storeEvent)
                               println(obj \ "Event" \ "cart")
@@ -93,10 +100,30 @@ object JsonParsing{
                               println(cartList.toString())
                               
                               
-                             val objCart =  cartList.extract[Cart]
-                             println(objCart.items.length)
-                              objCart.items.foreach(println(_))
-                              println("hello")
+                             val objCart =  cartList.extract[Cart]*/
+                              
+                              
+                              //////////
+                              
+                              
+                              
+                              
+                              
+                              
+                              
+                              
+                              
+                              
+                              //////////////////
+                              
+                              
+                              
+                              
+                              
+                              
+                            // println(objCart.items.length)
+                             // objCart.items.foreach(println(_))
+                             // println("hello")
                               ///JArray.unapply(cartList)
                              //val al =  cartList.as
                               
