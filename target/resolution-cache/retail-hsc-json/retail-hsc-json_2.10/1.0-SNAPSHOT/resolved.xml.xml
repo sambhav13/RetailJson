@@ -4,7 +4,7 @@
 		module="retail-hsc-json_2.10"
 		revision="1.0-SNAPSHOT"
 		status="integration"
-		publication="20161120222958"
+		publication="20161120232127"
 	>
 		<description>
 		Retail HSC JSON
@@ -42,5 +42,8 @@
 		<dependency org="org.json4s" name="json4s-jackson_2.10" rev="3.5.0" conf="compile->default(compile)"/>
 		<dependency org="net.liftweb" name="lift-json_2.10" rev="2.5.1" conf="compile->default(compile)"/>
 		<dependency org="org.scalatra" name="scalatra_2.10" rev="2.4.1" conf="compile->default(compile)"/>
+		<dependency org="org.eclipse.jetty" name="jetty-servlet" rev="9.1.5.v20140505" conf="compile->default(compile)"/>
+		<dependency org="com.sun.jersey.contribs" name="com.sun.jersey.contribs" rev="1.18.1" conf="compile->default(compile)"/>
+		<dependency org="com.sun.jersey" name="jersey-json" rev="1.18.1" conf="compile->default(compile)"/>
 	</dependencies>
 </ivy-module>

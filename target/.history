@@ -11,3 +11,5 @@ eclipse
 compile
 eclipse
 jetty:start
+container:start
+compile
