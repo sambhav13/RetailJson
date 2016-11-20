@@ -4,7 +4,7 @@
 		module="retail-hsc-json_2.10"
 		revision="1.0-SNAPSHOT"
 		status="integration"
-		publication="20161120162107"
+		publication="20161120222958"
 	>
 		<description>
 		Retail HSC JSON
@@ -41,5 +41,6 @@
 		<dependency org="org.json4s" name="json4s-native_2.10" rev="3.5.0" conf="compile->default(compile)"/>
 		<dependency org="org.json4s" name="json4s-jackson_2.10" rev="3.5.0" conf="compile->default(compile)"/>
 		<dependency org="net.liftweb" name="lift-json_2.10" rev="2.5.1" conf="compile->default(compile)"/>
+		<dependency org="org.scalatra" name="scalatra_2.10" rev="2.4.1" conf="compile->default(compile)"/>
 	</dependencies>
 </ivy-module>

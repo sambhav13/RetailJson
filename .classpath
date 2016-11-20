@@ -137,7 +137,6 @@
   <classpathentry kind="lib" path="C:\Users\sambhav\.ivy2\cache\org.apache.flume\flume-ng-core\jars\flume-ng-core-1.6.0.jar"/>
   <classpathentry kind="lib" path="C:\Users\sambhav\.ivy2\cache\org.apache.flume\flume-ng-configuration\jars\flume-ng-configuration-1.6.0.jar"/>
   <classpathentry kind="lib" path="C:\Users\sambhav\.ivy2\cache\org.apache.flume\flume-ng-auth\jars\flume-ng-auth-1.6.0.jar"/>
-  <classpathentry kind="lib" path="C:\Users\sambhav\.ivy2\cache\joda-time\joda-time\jars\joda-time-2.1.jar"/>
   <classpathentry kind="lib" path="C:\Users\sambhav\.ivy2\cache\org.mortbay.jetty\servlet-api\jars\servlet-api-2.5-20110124.jar"/>
   <classpathentry kind="lib" path="C:\Users\sambhav\.ivy2\cache\org.mortbay.jetty\jetty\jars\jetty-6.1.26.jar"/>
   <classpathentry kind="lib" path="C:\Users\sambhav\.ivy2\cache\com.google.code.gson\gson\jars\gson-2.2.2.jar"/>
@@ -146,6 +145,14 @@
   <classpathentry kind="lib" path="C:\Users\sambhav\.ivy2\cache\net.liftweb\lift-json_2.10\jars\lift-json_2.10-2.5.1.jar"/>
   <classpathentry kind="lib" path="C:\Users\sambhav\.ivy2\cache\org.scala-lang\scalap\jars\scalap-2.10.0.jar"/>
   <classpathentry kind="con" path="org.scala-ide.sdt.launching.SCALA_COMPILER_CONTAINER"/>
+  <classpathentry kind="lib" path="C:\Users\sambhav\.ivy2\cache\org.scalatra\scalatra_2.10\jars\scalatra_2.10-2.4.1.jar"/>
+  <classpathentry kind="lib" path="C:\Users\sambhav\.ivy2\cache\org.scalatra\scalatra-common_2.10\jars\scalatra-common_2.10-2.4.1.jar"/>
+  <classpathentry kind="lib" path="C:\Users\sambhav\.ivy2\cache\org.clapper\grizzled-slf4j_2.10\jars\grizzled-slf4j_2.10-1.0.2.jar"/>
+  <classpathentry kind="lib" path="C:\Users\sambhav\.ivy2\cache\org.scalatra.rl\rl_2.10\jars\rl_2.10-0.4.10.jar"/>
+  <classpathentry kind="lib" path="C:\Users\sambhav\.ivy2\cache\com.googlecode.juniversalchardet\juniversalchardet\jars\juniversalchardet-1.0.3.jar"/>
+  <classpathentry kind="lib" path="C:\Users\sambhav\.ivy2\cache\eu.medsea.mimeutil\mime-util\bundles\mime-util-2.1.3.jar"/>
+  <classpathentry kind="lib" path="C:\Users\sambhav\.ivy2\cache\joda-time\joda-time\jars\joda-time-2.9.1.jar"/>
+  <classpathentry kind="lib" path="C:\Users\sambhav\.ivy2\cache\org.joda\joda-convert\jars\joda-convert-1.8.1.jar"/>
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
   <classpathentry kind="output" path="bin"/>
 </classpath>

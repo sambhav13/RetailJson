@@ -8,3 +8,6 @@ compile
 reload
 compile
 eclipse
+compile
+eclipse
+jetty:start

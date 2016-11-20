@@ -28,6 +28,7 @@ case class Cart(val productId:String,val quantity:String,val price:String)
 
 case class Event1(val eventType:String,val Event:CheckOutEvent)
 case class Event2(val eventType:String,val Event:LocationEvent)
+case class CheckObj(val orgId:String,val storeId:String,val userId:String)
 object RetailJsonStream{
  implicit val formats = new DefaultFormats {
 		override def dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
@@ -64,13 +65,13 @@ object RetailJsonStream{
 		  }
 		)
 		
-		/*val checkOutRDD = rdd.filter(x => {
+		val checkOutRDD = rdd.filter(x => {
 		  
 		    val pd = parseJs(x)
 		    val eType = pd.extract[String]
 		    (eType.equals("CheckOutEvent"))
 		  }
-		)*/
+		)
 		
 		import spark.implicits._
 		val locData = locationRDD.map(x =>  { val data = parseLocEvent(x)	;data.Event})
@@ -82,12 +83,36 @@ object RetailJsonStream{
 		val last = spark.sql("select userId,orgId,count(rackId) from LocationEvent group by userId,orgId")
 		
 		
+		
+		val checkOutData = checkOutRDD.map(x => { 
+		  val data = parseCheckOutEvent(x) 
+		  val eve = data.Event;
+		  CheckObj(eve.orgId, eve.storeId, eve.userId)
+		 }
+		)
+		
+	checkOutData.createOrReplaceTempView("CheckOutEvent")
+	val last2 = spark.sql("select userId,orgId,count(storeId) from CheckOutEvent group by userId,orgId")
+		
+		/*import org.apache.spark.sql.Row
+    checkOutData.explode($"orgId", $"cart") {case row: Row =>
+    val id = row(0).asInstanceOf[String]
+    val words = row(1).asInstanceOf[String].split(" ")
+    words.map(word => (id, word))
+    }*/
+		
+		// This may be replaced by explodeArray() someday val explodedDepartmentWithEmployeesDF = departmentWithEmployeesDF.explode(departmentWithEmployeesDF("employees")) { case Row(employee: Seq[Row]) => employee.map(employee => Employee(employee(0).asInstanceOf[String], employee(1).asInstanceOf[String], employee(2).asInstanceOf[String]) ) }
+		
+		//checkOutData.createOrReplaceTempView("CheckOutEvent")
+						//spark.sqlContext.cacheTable("person")
+		//val last2 = spark.sql("select userId,orgId,count(rackId) from CheckOutEvent group by userId,orgId")
+		
 /*	val df = locData.as[LocationEvent]
 		
 		//val orgID = df.select($"orgId")
 		//val deviceEventsDS = ds.select($"device_name", $"cca3", $"c02_level").where($"c02_level" > 1300)
 
-		//val checkOutData = checkOutRDD.map(x => parseLocEvent(x))
+		//
 		
 		
 		locData.foreach { x => println(x.Event.storeId)}
@@ -104,7 +129,15 @@ object RetailJsonStream{
 						.format("console")
 						.start()
 						
+						/*val query2 = last2.writeStream
+						.outputMode("complete")
+						.format("console")
+						.start()*/
+						
+						last2.writeStream.outputMode("complete").format("csv")
+						
 		query.awaitTermination()
+		//query2.awaitTermination()
 		
 	}
 
