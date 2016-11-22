@@ -1,0 +1,136 @@
+import org.apache.spark.SparkConf
+import org.apache.spark.SparkContext
+import org.apache.spark.sql.SQLContext
+import org.apache.spark.streaming.StreamingContext
+import org.apache.spark.streaming.Seconds
+import org.apache.spark.sql.SaveMode
+import org.apache.spark.storage.StorageLevel
+import org.apache.spark.rdd.RDD
+import org.apache.spark.streaming.Time
+
+import org.apache.spark.sql.types.{
+    StructType, StructField, StringType, IntegerType}
+import org.apache.spark.sql.Row
+import java.sql.Timestamp
+import java.text.SimpleDateFormat
+import net.liftweb.json.DefaultFormats
+import java.text.DateFormat
+import java.util.Date
+
+import org.apache.spark.sql.functions.udf
+
+
+
+
+
+object DStreamUser {
+  
+  case class User(userId:String, rack:String, time:Timestamp)
+  
+  def time_delta( t1:Timestamp, t2:Timestamp):Long = { 
+    //from datetime import datetime
+    val delta = t1.getTime() - t2.getTime()
+    return delta
+  }
+  
+   def timeAdd( t1:Timestamp):Timestamp = { 
+    //from datetime import datetime
+    val delta = t1.getTime + 24 * 60 * 60 * 1000
+    return new Timestamp(delta)
+  }
+
+  def main(args:Array[String])={
+    
+    val sparkConf = new SparkConf().setAppName("DStreamAgg")
+                                   .setMaster("local[2]")
+                                   //.setMaster("spark://ip-172-31-21-112.ec2.internal:7077")
+   // val sc = new SparkContext(sparkConf)
+   
+    // Create the streaming context with a 3 second batch size
+    val ssc = new StreamingContext(sparkConf, Seconds(3))
+    
+    val sqlContext = new SQLContext(ssc.sparkContext)
+    val lines = ssc.socketTextStream("localhost", 9999, StorageLevel.MEMORY_AND_DISK_SER)
+
+    var alldata=sqlContext.emptyDataFrame
+    alldata.createOrReplaceTempView("alldata")
+    
+    
+    val schema = StructType(
+    StructField("id", IntegerType, true) ::
+    StructField("status", StringType, false) ::
+    StructField("source", StringType, false) ::
+    Nil)
+    
+   /*  val dataSet = sqlContext.read.schema(schema).json("./Data/DataDstream_Inside_partition")
+   println(dataSet.rdd.partitioner)
+     
+    val newDstr =  lines.map(w => {
+        val words = w.split(",")
+        Record(words(0).toInt, words(1), words(2))
+        }
+    )*/
+     // Join each batch in stream with the dataset
+  //val joinedstr = newDstr.transform(x => dataSet.join(x,x$"id".equalTo(dataSet.col("id")))
+  
+   val url = "jdbc:mysql://localhost:3306/test"
+			  val table = "people";
+      
+        import java.util.Properties
+        
+        
+        val prop = new Properties() 
+		    prop.put("user", "root")
+		    prop.put("password", "")
+		    prop.put("driver", "com.mysql.jdbc.Driver")
+
+      
+			  val readData = sqlContext.read.format("jdbc").option("url", "jdbc:mysql://localhost:3306/test")
+			                .option("driver", "com.mysql.jdbc.Driver")
+			                .option("dbtable", "user")
+			                .option("user", "root")
+			                .option("password", "")
+			                .load()
+			                
+			   readData.show()
+     
+    lines.foreachRDD( (rdd: RDD[String], time: Time) => {
+      import sqlContext.implicits._
+     /* implicit val formats = new DefaultFormats {
+    override def dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+  } */
+
+      // Convert RDD[String] to DataFrame
+      val data = rdd.map(w => {
+        val words = w.split(",")
+       val  df:DateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        val date:Date = df.parse(words(2))
+        
+        val time = new Timestamp(date.getTime())
+        User(words(0), words(1), time)
+        }).toDF()
+
+        
+        val myUDF = udf(time_delta _ )
+        val oneDay = udf(timeAdd _ )
+        val unionedData = data.union(readData).withColumn("timespent",oneDay(data.col("time")))
+        //.withColumn("timespent", myUDF(data.col("time"),readData.col("time")) )
+        //unionedData.show()
+        
+        import org.apache.spark.sql.functions._ 
+        val aggregatedData = data.union(readData).groupBy("userId").agg(max("time").alias("maxTime"),min("time").alias("minTime"
+                            ))
+        aggregatedData.withColumn("timespent",
+                                myUDF(aggregatedData.col("maxTime"),aggregatedData.col("minTime"))).show()
+       // data.union(readData).groupBy("userId").max("time").show()
+        //val joinedData = data.join(readData,data.col("userId")===readData.col("id"),joinType="inner")
+        
+        //joinedData.show()
+        data.write.mode(SaveMode.Append).jdbc(url,"user",prop)
+     })
+         
+     ssc.start()
+     ssc.awaitTermination()
+        
+    }
+}

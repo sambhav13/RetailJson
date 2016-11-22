@@ -19,7 +19,9 @@ object DStreamAgg {
   case class Record(id:Int, status:String, source:String)
   def main(args:Array[String])={
     
-    val sparkConf = new SparkConf().setAppName("DStreamAgg").setMaster("spark://ip-172-31-21-112.ec2.internal:7077")
+    val sparkConf = new SparkConf().setAppName("DStreamAgg")
+                                   .setMaster("local[2]")
+                                   //.setMaster("spark://ip-172-31-21-112.ec2.internal:7077")
    // val sc = new SparkContext(sparkConf)
    
     // Create the streaming context with a 3 second batch size

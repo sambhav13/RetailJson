@@ -14,3 +14,16 @@ jetty:start
 container:start
 compile
 eclipse
+compile
+eclipse
+compile
+assembly
+clean
+compile
+assembly
+eclipse
+compile
+eclipse
+compile
+eclipse
+clear

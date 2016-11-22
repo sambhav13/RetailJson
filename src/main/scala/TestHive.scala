@@ -46,7 +46,7 @@ object TestHive{
 		    prop.put("driver", "com.mysql.jdbc.Driver")
 
       
-			  peopJson.write.mode(SaveMode.Append).jdbc(url,"people",prop)
+			 // peopJson.write.mode(SaveMode.Append).jdbc(url,"people",prop)
 			  
 			//	spark.read.format("jdbc").option("url",
 			  
