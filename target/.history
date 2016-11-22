@@ -13,3 +13,4 @@ eclipse
 jetty:start
 container:start
 compile
+eclipse
