@@ -39,6 +39,38 @@ object DStreamUser {
     val delta = t1.getTime + 24 * 60 * 60 * 1000
     return new Timestamp(delta)
   }
+   
+   
+   def timeMonth(t1:Timestamp):Int = {
+     
+     val month = t1.getMonth();
+     return month
+   }
+   
+   def timeDay(t1:Timestamp):Int = {
+     
+     val month = t1.getDate();
+     return month
+   }
+   
+   
+   def timeQuarter(t1:Timestamp):Int = {
+     
+     val month = t1.getMonth();
+     var quarter:Int = 0
+     if(month<3){
+       quarter = 1
+     } else if(month >3 & month<6) {
+              quarter = 2
+     } else if(month >6 & month<9){
+       quarter = 3
+     }else{
+       quarter = 4
+     }
+    
+     return quarter
+   }
+
 
   def main(args:Array[String])={
     
@@ -114,6 +146,15 @@ object DStreamUser {
         
         val myUDF = udf(time_delta _ )
         val oneDay = udf(timeAdd _ )
+        val monthUDF = udf(timeMonth _ )
+        val dayUDF = udf(timeDay _ )
+        val quarterUDF = udf(timeQuarter _ )
+        
+        val dailyData = data.union(readData).withColumn("day", dayUDF(data.col("time")))
+        val monthlyData = data.union(readData).withColumn("month", monthUDF(data.col("time")))
+        val quarterlyData = data.union(readData).withColumn("quarter", quarterUDF(data.col("time")))
+        
+        
         val unionedData = data.union(readData).withColumn("timespent",oneDay(data.col("time")))
         //.withColumn("timespent", myUDF(data.col("time"),readData.col("time")) )
         //unionedData.show()
@@ -141,11 +182,14 @@ object DStreamUser {
                                 myUDF(aggregatedData.col("maxTime"),aggregatedData.col("minTime")))
        
        
-        val aggregatedData_perUserperRack = data.union(readData).groupBy("userId","rack").agg(max("time").alias("maxTime"),min("time").alias("minTime"
+        val aggregatedData_perUserperRack = data.union(readData).groupBy("userId").agg(max("time").alias("maxTime"),min("time").alias("minTime"
                             ))
                                 
         val sortedData = data.union(readData).sort($"time")
        val userRack = sortedData.select("userId", "rack").limit(1)
+       
+       
+       userRack
                                 
         data.write.mode(SaveMode.Append).jdbc(url,"user",prop)
      })
