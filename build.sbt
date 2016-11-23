@@ -13,6 +13,9 @@ libraryDependencies += "org.json4s" % "json4s-native_2.11" % "3.5.0"
 libraryDependencies += "org.json4s" % "json4s-jackson_2.11" % "3.5.0"
 libraryDependencies += "net.liftweb" % "lift-json_2.11" % "3.0"
 libraryDependencies += "org.scalatra" % "scalatra_2.11" % "2.4.1"
+libraryDependencies += "org.scalatra" % "scalatra_2.11" % "2.4.1"
+libraryDependencies += "org.apache.activemq" % "activemq-core" % "5.5.0"
+
 
 
 mergeStrategy in assembly <<= (mergeStrategy in assembly) ((old) => {

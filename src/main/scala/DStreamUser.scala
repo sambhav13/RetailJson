@@ -18,6 +18,7 @@ import java.text.DateFormat
 import java.util.Date
 
 import org.apache.spark.sql.functions.udf
+import org.apache.spark.sql.types.DataType
 
 
 
@@ -117,15 +118,35 @@ object DStreamUser {
         //.withColumn("timespent", myUDF(data.col("time"),readData.col("time")) )
         //unionedData.show()
         
+       
+        
+        
         import org.apache.spark.sql.functions._ 
+        
+        val footFalldata = data.union(readData).groupBy("userId").agg(count("userId").alias("Footfall"))
+        footFalldata.show()
+        
+        footFalldata.write.mode(SaveMode.Overwrite).jdbc(url,"userVisits",prop);
+      
         val aggregatedData = data.union(readData).groupBy("userId").agg(max("time").alias("maxTime"),min("time").alias("minTime"
                             ))
-        aggregatedData.withColumn("timespent",
+       aggregatedData.withColumn("timespent",
                                 myUDF(aggregatedData.col("maxTime"),aggregatedData.col("minTime"))).show()
        // data.union(readData).groupBy("userId").max("time").show()
         //val joinedData = data.join(readData,data.col("userId")===readData.col("id"),joinType="inner")
         
         //joinedData.show()
+                                
+       val timeSpentData_perUser = aggregatedData.withColumn("timespent",
+                                myUDF(aggregatedData.col("maxTime"),aggregatedData.col("minTime")))
+       
+       
+        val aggregatedData_perUserperRack = data.union(readData).groupBy("userId","rack").agg(max("time").alias("maxTime"),min("time").alias("minTime"
+                            ))
+                                
+        val sortedData = data.union(readData).sort($"time")
+       val userRack = sortedData.select("userId", "rack").limit(1)
+                                
         data.write.mode(SaveMode.Append).jdbc(url,"user",prop)
      })
          
