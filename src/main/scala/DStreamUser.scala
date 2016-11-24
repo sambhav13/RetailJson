@@ -155,6 +155,10 @@ object DStreamUser {
         val quarterlyData = data.union(readData).withColumn("quarter", quarterUDF(data.col("time")))
         
         
+        dailyData.show()
+        monthlyData.show()
+        quarterlyData.show()
+        
         val unionedData = data.union(readData).withColumn("timespent",oneDay(data.col("time")))
         //.withColumn("timespent", myUDF(data.col("time"),readData.col("time")) )
         //unionedData.show()
@@ -164,7 +168,7 @@ object DStreamUser {
         
         import org.apache.spark.sql.functions._ 
         
-        val footFalldata = data.union(readData).groupBy("userId").agg(count("userId").alias("Footfall"))
+      /*  val footFalldata = data.union(readData).groupBy("userId").agg(count("userId").alias("Footfall"))
         footFalldata.show()
         
         footFalldata.write.mode(SaveMode.Overwrite).jdbc(url,"userVisits",prop);
@@ -189,9 +193,9 @@ object DStreamUser {
        val userRack = sortedData.select("userId", "rack").limit(1)
        
        
-       userRack
+       
                                 
-        data.write.mode(SaveMode.Append).jdbc(url,"user",prop)
+        data.write.mode(SaveMode.Append).jdbc(url,"user",prop)*/
      })
          
      ssc.start()
