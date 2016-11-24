@@ -69,8 +69,8 @@ def timeMonth(t1:Timestamp):Int = {
 
 def timeDay(t1:Timestamp):Int = {
 
-	val month = t1.getDate();
-	return month
+	val day = t1.getDate();
+	return day
 }
 
 
@@ -114,7 +114,7 @@ def main(args:Array[String])={
 			.setMaster("local[2]")
 			//.setMaster("spark://ip-172-31-21-112.ec2.internal:7077")
 
-			val ssc = new StreamingContext(sparkConf, Seconds(3))
+			val ssc = new StreamingContext(sparkConf, Seconds(2))
 
 	val sqlContext = new SQLContext(ssc.sparkContext)
 	val lines = ssc.socketTextStream("localhost", 9999, StorageLevel.MEMORY_AND_DISK_SER)
@@ -153,7 +153,7 @@ def main(args:Array[String])={
 
 		}).toDF()
 
-		LocationDF.show()
+		//LocationDF.show()
 
 
 		val CheckOutDF =   CheckOutEventData.map ( x =>  {
@@ -166,8 +166,8 @@ def main(args:Array[String])={
 
 		}).toDF()
 
-		CheckOutDF.show()
-		println(CheckOutDF.schema)
+		//CheckOutDF.show()
+		//println(CheckOutDF.schema)
 
 		//UDF registration 
 		
@@ -252,8 +252,44 @@ def main(args:Array[String])={
 
 
 
+					/********Sales************/
+          /////////////////
+						
+						
+						
+						//*****Monthly and Weekly Store CheckOut******//
+						////////
 
-
+						val daySegregation_store_sale  = CheckOutDF.withColumn("day", dayUDF(CheckOutDF.col("checkOutTime")))
+						val weekSegregation_store_sale  = CheckOutDF.withColumn("week", weekUDF(CheckOutDF.col("checkOutTime")))
+						val monthlySegregation_store_sale = CheckOutDF.withColumn("month", monthUDF(CheckOutDF.col("checkOutTime")))
+						val quarterSegregation_store_sale = CheckOutDF.withColumn("quarter", quarterUDF(CheckOutDF.col("checkOutTime")))
+						
+						/*weekSegregation_store.show()
+            monthlySegregation_store.show()
+            quarterSegregation_store.show()*/
+						
+						import org.apache.spark.sql.functions._
+            
+						daySegregation_store_sale.groupBy("orgId", "storeId").agg(count("day").alias("dayCount")).show()
+            weekSegregation_store_sale.groupBy("orgId", "storeId").agg(count("week").alias("weekCount")).show()
+            monthlySegregation_store_sale.groupBy("orgId", "storeId").agg(count("month").alias("monthCount")).show()
+            quarterSegregation_store_sale.groupBy("orgId", "storeId").agg(count("quarter").alias("quarterCount")).show()
+            
+            
+            
+          
+            val dailyFootFall_store_sale = daySegregation_store_sale.filter(checkCurrentDayfunc(daySegregation_store_sale.col("day"))).select("userId","orgId","storeId","day")
+						dailyFootFall_store_sale.groupBy("userId","orgId","storeId").agg(count("day").alias("currentDayCount")).show()
+						////////
+						
+						
+						
+						
+						
+						
+						
+				///////////////////////////
 
 
 
