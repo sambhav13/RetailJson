@@ -1,4 +1,4 @@
-import org.scalatra._
+/*import org.scalatra._
 
 class MyServlet extends ScalatraServlet  {
 
@@ -11,7 +11,7 @@ class MyServlet extends ScalatraServlet  {
     </html>
   }
 
-}
+}*/
 
 /*libraryDependencies += "org.eclipse.jetty" %"jetty-servlet" % "9.1.5.v20140505"
 libraryDependencies += "com.sun.jersey.contribs" % "com.sun.jersey.contribs" % "1.18.1" 

@@ -112,12 +112,33 @@ def main(args:Array[String])={
 
 	val sparkConf = new SparkConf().setAppName("DStreamAgg")
 			.setMaster("local[2]")
+			.set("spark.sql.shuffle.partitions","1")
 			//.setMaster("spark://ip-172-31-21-112.ec2.internal:7077")
 
-			val ssc = new StreamingContext(sparkConf, Seconds(2))
+			val ssc = new StreamingContext(sparkConf, Seconds(3))
 
 	val sqlContext = new SQLContext(ssc.sparkContext)
 	val lines = ssc.socketTextStream("localhost", 9999, StorageLevel.MEMORY_AND_DISK_SER)
+
+
+ //DB connection
+	val url = "jdbc:mysql://localhost:3306/test"
+	val table = "people";
+	import java.util.Properties
+	val prop = new Properties() 
+	prop.put("user", "root")
+	prop.put("password", "")
+	prop.put("driver", "com.mysql.jdbc.Driver")
+
+	val dailyStoreData = sqlContext.read.format("jdbc").option("url", "jdbc:mysql://localhost:3306/test")
+	.option("driver", "com.mysql.jdbc.Driver")
+	.option("dbtable", "DailyStoreData")
+	.option("user", "root")
+	.option("password", "")
+	.load()
+	
+	
+	
 
 
 
@@ -170,7 +191,7 @@ def main(args:Array[String])={
 		//println(CheckOutDF.schema)
 
 		//UDF registration 
-		
+
 		val dayUDF = udf(timeDay _ )		
 		val weekUDF = udf(timeWeek _)
 		val monthUDF = udf(timeMonth _ )
@@ -192,7 +213,7 @@ def main(args:Array[String])={
 				}
 
 				val checkCurrentDayfunc = udf(func)
-						
+
 
 						////////
 
@@ -202,26 +223,44 @@ def main(args:Array[String])={
 						////////
 
 						val daySegregation_store  = LocationDF.withColumn("day", dayUDF(LocationDF.col("time")))
-						val weekSegregation_store  = LocationDF.withColumn("week", weekUDF(LocationDF.col("time")))
+						.select("userId","orgId","storeId","day")
+						//daySegregation_store.show() //to Test
+						/*val weekSegregation_store  = LocationDF.withColumn("week", weekUDF(LocationDF.col("time")))
+						                                      .select("userId","orgId","storeId","week")
 						val monthlySegregation_store = LocationDF.withColumn("month", monthUDF(LocationDF.col("time")))
+						                                      .select("userId","orgId","storeId","month")
 						val quarterSegregation_store = LocationDF.withColumn("quarter", quarterUDF(LocationDF.col("time")))
-						
+						                                      .select("userId","orgId","storeId","quarter")*/
+
+
+
 						/*weekSegregation_store.show()
             monthlySegregation_store.show()
             quarterSegregation_store.show()*/
-						
+
 						import org.apache.spark.sql.functions._
-            
-						daySegregation_store.groupBy("orgId", "storeId").agg(count("day").alias("dayCount")).show()
-            weekSegregation_store.groupBy("orgId", "storeId").agg(count("week").alias("weekCount")).show()
-            monthlySegregation_store.groupBy("orgId", "storeId").agg(count("month").alias("monthCount")).show()
-            quarterSegregation_store.groupBy("orgId", "storeId").agg(count("quarter").alias("quarterCount")).show()
-            
-            
-            
-          
-            val dailyFootFall_store = daySegregation_store.filter(checkCurrentDayfunc(daySegregation_store.col("day"))).select("userId","orgId","storeId","day")
-						dailyFootFall_store.groupBy("userId","orgId","storeId").agg(count("day").alias("currentDayCount")).show()
+
+						//daySegregation_store.groupBy("orgId", "storeId").agg(count("day").alias("dayCount")).show()
+						//weekSegregation_store.groupBy("orgId", "storeId").agg(count("week").alias("weekCount")).show()
+						//monthlySegregation_store.groupBy("orgId", "storeId").agg(count("month").alias("monthCount")).show()
+						//quarterSegregation_store.groupBy("orgId", "storeId").agg(count("quarter").alias("quarterCount")).show()
+
+
+
+
+						val dailyFootFall_store = daySegregation_store.filter(checkCurrentDayfunc(daySegregation_store.col("day")))
+						                                              .select("userId","orgId","storeId","day")
+						                                              
+			       //dailyFootFall_store.show()
+						// dailyFootFall_store.show()
+						//dailyFootFall_store.groupBy("userId","orgId","storeId").agg(count("day").alias("currentDayCount")).show()
+						dailyFootFall_store.groupBy("orgId","storeId").agg(count("userId").alias("currentDayCount"))
+						//.show()
+						
+						
+						
+						
+						
 						////////
 
 						/*
@@ -233,63 +272,162 @@ def main(args:Array[String])={
 						val weekSegregation_rack  = LocationDF.withColumn("week", weekUDF(LocationDF.col("time")))
 						val monthlySegregation_rack = LocationDF.withColumn("month", monthUDF(LocationDF.col("time")))
 						val quarterSegregation_rack = LocationDF.withColumn("quarter", quarterUDF(LocationDF.col("time")))
-						
+
 						/*weekSegregation_rack.show()
             monthlySegregation_rack.show()
             quarterSegregation_rack.show()*/
-            
+
             daySegregation_rack.groupBy("orgId", "storeId","rackId").agg(count("day").alias("dayCount")).show()
             weekSegregation_rack.groupBy("orgId", "storeId","rackId").agg(count("week").alias("weekCount")).show()
             monthlySegregation_rack.groupBy("orgId", "storeId","rackId").agg(count("month").alias("monthCount")).show()
             quarterSegregation_rack.groupBy("orgId", "storeId","rackId").agg(count("quarter").alias("quarterCount")).show()
-            
-            
-            
+
+
+
             val dailyFootFall_rack = daySegregation_rack.filter(checkCurrentDayfunc(daySegregation_rack.col("day"))).select("userId","orgId","storeId","time")
 						dailyFootFall_rack.groupBy("userId","orgId","storeId").count().show()
-						*/
+						 */
 						////////
 
 
+					 //TOP 3 Category by FootFall
+						val categoryFootFall_Dynamic  = LocationDF.withColumn("day", dayUDF(LocationDF.col("time")))
+						                                       .select("day","orgId","storeId","rackId")
+						                                       .withColumnRenamed("rackId", "categoryId")
+						
+						val categoryFootFall_Static = sqlContext.read.format("jdbc").option("url", "jdbc:mysql://localhost:3306/test")
+                                          	.option("driver", "com.mysql.jdbc.Driver")
+                                          	.option("dbtable", "DailyCategoryFootFallData")
+                                          	.option("user", "root")
+                                          	.option("password", "")
+                                          	.load()	
+						
+						
+						
+						val mergedCategoryFootFall = categoryFootFall_Dynamic.union(categoryFootFall_Static)
+						
+						categoryFootFall_Dynamic.write.mode(SaveMode.Append).jdbc(url,"DailyCategoryFootFallData",prop)
+            mergedCategoryFootFall.show()
+            
+            
+            
+            val categoryFootFallTopDynamic  = mergedCategoryFootFall.groupBy("day","categoryId").agg(count("day").alias("currentDayCategoryCount"))
+						
+						val categoryFootFallTopStatic = sqlContext.read.format("jdbc").option("url", "jdbc:mysql://localhost:3306/test")
+                                          	.option("driver", "com.mysql.jdbc.Driver")
+                                          	.option("dbtable", "DailyCategoryFootFallCount")
+                                          	.option("user", "root")
+                                          	.option("password", "")
+                                          	.load()
+                                          	
+                                          	
+            val mergedCategoryFootFallCount  = categoryFootFallTopDynamic.union(categoryFootFallTopStatic)
+            
+            //DailyProductCount
+						mergedCategoryFootFallCount.write.mode(SaveMode.Overwrite).jdbc(url,"DailyCategoryFootFallCount",prop)
+						mergedCategoryFootFallCount.show()
 
-					/********Sales************/
-          /////////////////
-						
-						
-						
+						/********Sales************/
+						/////////////////
+
+
+
 						//*****Monthly and Weekly Store CheckOut******//
 						////////
-
-						val daySegregation_store_sale  = CheckOutDF.withColumn("day", dayUDF(CheckOutDF.col("checkOutTime")))
-						val weekSegregation_store_sale  = CheckOutDF.withColumn("week", weekUDF(CheckOutDF.col("checkOutTime")))
-						val monthlySegregation_store_sale = CheckOutDF.withColumn("month", monthUDF(CheckOutDF.col("checkOutTime")))
-						val quarterSegregation_store_sale = CheckOutDF.withColumn("quarter", quarterUDF(CheckOutDF.col("checkOutTime")))
 						
+						
+						//Top 3 Category by Sales
+						val cart = CheckOutDF.select("cart")
+						//val resDf = CheckOutDF.withColumn("Products", when(CheckOutDF("cart").isNotNull, explode(CheckOutDF("cart"))))
+						
+						
+						val resDf = CheckOutDF.withColumn("Products", explode(CheckOutDF("cart")))
+						                      .select("userId","orgId","storeId","checkOutTime","Products.productId","Products.quantity")
+						
+						/*val checkOutExplodedDF = resDf.withColumn("day", dayUDF(CheckOutDF.col("checkOutTime")))
+						                                           .select("userId","orgId","storeId","day",
+						                                               "productId","quantity")*/
+						                      
+					
+						                                               
+            val productDataDynamic = resDf.withColumn("day", dayUDF(CheckOutDF.col("checkOutTime")))
+						                                           .select("day","productId","quantity")
+						
+						val productDataStatic = sqlContext.read.format("jdbc").option("url", "jdbc:mysql://localhost:3306/test")
+                                          	.option("driver", "com.mysql.jdbc.Driver")
+                                          	.option("dbtable", "DailyProductData")
+                                          	.option("user", "root")
+                                          	.option("password", "")
+                                          	.load()		   	
+                                          	
+           val mergedProductData =  productDataDynamic.union(productDataStatic)
+           
+           productDataDynamic.write.mode(SaveMode.Append).jdbc(url,"DailyProductData",prop)
+          // mergedProductData.show()
+           
+						
+						val productTopDynamic  = mergedProductData.groupBy("day","productId").agg(count("quantity").alias("currentDayProductCount"))
+						
+						val productTopStatic = sqlContext.read.format("jdbc").option("url", "jdbc:mysql://localhost:3306/test")
+                                          	.option("driver", "com.mysql.jdbc.Driver")
+                                          	.option("dbtable", "DailyProductCount")
+                                          	.option("user", "root")
+                                          	.option("password", "")
+                                          	.load()
+                                          	
+                                          	
+            val mergedProductCount  = productTopDynamic.union(productTopStatic)
+            
+            //DailyProductCount
+						mergedProductCount.write.mode(SaveMode.Overwrite).jdbc(url,"DailyProductCount",prop)
+					//	mergedProductCount.show()
+						
+						 
+						
+						/*val daySegregation_store_sale  = CheckOutDF.withColumn("day", dayUDF(CheckOutDF.col("checkOutTime")))
+						                                           .select("userId","orgId","storeId","day")
+						                                           .withColumnRenamed("rackId", "categoryId")*/
+					 //daySegregation_store_sale.show()
+					/*	val weekSegregation_store_sale  = CheckOutDF.withColumn("week", weekUDF(CheckOutDF.col("checkOutTime")))
+						                                            .select("userId","orgId","storeId","rackId","week")
+						                                            .withColumnRenamed("rackId", "categoryId")
+						val monthlySegregation_store_sale = CheckOutDF.withColumn("month", monthUDF(CheckOutDF.col("checkOutTime")))
+						                                            .select("userId","orgId","storeId","rackId","month")
+						                                            .withColumnRenamed("rackId", "categoryId")
+						val quarterSegregation_store_sale = CheckOutDF.withColumn("quarter", quarterUDF(CheckOutDF.col("checkOutTime")))
+						                                              .select("userId","orgId","storeId","rackId","quarter")
+						                                              .withColumnRenamed("rackId", "categoryId")*/
 						/*weekSegregation_store.show()
             monthlySegregation_store.show()
             quarterSegregation_store.show()*/
-						
+
 						import org.apache.spark.sql.functions._
-            
-						daySegregation_store_sale.groupBy("orgId", "storeId").agg(count("day").alias("dayCount")).show()
+
+						/*daySegregation_store_sale.groupBy("orgId", "storeId").agg(count("day").alias("dayCount")).show()
             weekSegregation_store_sale.groupBy("orgId", "storeId").agg(count("week").alias("weekCount")).show()
             monthlySegregation_store_sale.groupBy("orgId", "storeId").agg(count("month").alias("monthCount")).show()
             quarterSegregation_store_sale.groupBy("orgId", "storeId").agg(count("quarter").alias("quarterCount")).show()
-            
-            
-            
-          
-            val dailyFootFall_store_sale = daySegregation_store_sale.filter(checkCurrentDayfunc(daySegregation_store_sale.col("day"))).select("userId","orgId","storeId","day")
-						dailyFootFall_store_sale.groupBy("userId","orgId","storeId").agg(count("day").alias("currentDayCount")).show()
+
+*/
+
+
+           // val dailyFootFall_store_sale = daySegregation_store_sale.filter(checkCurrentDayfunc(daySegregation_store_sale.col("day")))
+                                     //                               .select("userId","orgId","storeId","categoryId","day")
+             //  dailyFootFall_store_sale.show()
+            //dailyFootFall_store_sale.groupBy("orgId","storeId","categoryId").agg(count("userId").alias("currentDayCount"))
+            //.show()
+						//dailyFootFall_store_sale.groupBy("userId","orgId","storeId").agg(count("day").alias("currentDayCount")).show()
+
+						println("!!!!!!!!!!! Batch completed  !!!!!!!!!!!!")
 						////////
-						
-						
-						
-						
-						
-						
+
+
+
+
+
+
 						//
-				///////////////////////////
+						///////////////////////////
 
 
 

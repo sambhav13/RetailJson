@@ -21,6 +21,7 @@ object DStreamAgg {
     
     val sparkConf = new SparkConf().setAppName("DStreamAgg")
                                    .setMaster("local[2]")
+                                   
                                    //.setMaster("spark://ip-172-31-21-112.ec2.internal:7077")
    // val sc = new SparkContext(sparkConf)
    

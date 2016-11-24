@@ -13,8 +13,29 @@
 	   }
 }
 {"eventType":"CheckOutEvent","Event":{"userId":"u1","orgId":"org1","storeId":"s1","cart":[{"productId":"p1","quantity":2,"price":10},{"productId":"p2","quantity":1,"price":12.4},{"productId":"p3","quantity":3,"price":20}],"checkOutTime":"2016-11-11 11:10:10"  }}
+{"eventType":"CheckOutEvent","Event":{"userId":"u2","orgId":"org1","storeId":"s1","cart":[{"productId":"p4","quantity":2,"price":10},{"productId":"p1","quantity":1,"price":12.4},{"productId":"p3","quantity":3,"price":20}],"checkOutTime":"2016-11-11 11:12:10"  }}
+
+{"eventType":"LocationEvent","Event":{"userId":"u2","orgId":"org1","storeId":"s1","rackId":"r2","time":"2016-11-11 11:13:10"}}
+
+{"eventType":"LocationEvent","Event":{"userId":"u1","orgId":"org1","storeId":"s1","rackId":"r1","time":"2016-11-25 11:10:10"}}
 
 
-{"eventType":"LocationEvent","Event":{"userId":"u1","orgId":"org1","storeId":"s1","rackId":"r1","time":"2016-11-11 11:10:10"}}
 
-{"eventType":"LocationEvent","Event":{"userId":"u1","orgId":"org1","storeId":"s1","rackId":"r1","time":"2016-11-24 11:10:10"}}
+
+
+Tables Created for static data loading and maintaining state
+create table DailyStoreData(userId varchar(40),orgId varchar(40),storeId varchar(40),day int);
+
+
+create table DailyStoreSalesData(userId varchar(40),orgId varchar(40),storeId varchar(40),categoryId varchar(40),day int);
+
+
+create table DailyProductData(day int,productId varchar(40),quantity int);
+create table DailyProductCount(day int,productId varchar(40),currentDayProductCount int);
+
+
+create table DailyCategoryFootFallData(day int,orgId varchar(40),storeId varchar(40),categoryId varchar(40));
+create table DailyCategoryFootFallCount(day int,categoryId varchar(40),currentDayCategoryCount int);
+
+
+select * from DailyCategoryFootFallData
