@@ -1,0 +1,49 @@
+
+
+DailyCategorySale
+create table DailyCategorySale(orgId varchar(40),storeId varchar(40),day int,month int,year int,category varchar(40),sale int);
+
+create table DailyCategorySaleCount(orgId varchar(40),storeId varchar(40),day int,month int,year int,category varchar(40),saleCount int);
+
+
+DailyCategoryFootFall
+create table DailyCategoryFootFall(orgId varchar(40),storeId varchar(40),day int,month int,year int,category varchar(40),FootFall int);
+
+create table DailyCategoryFootFallCount(orgId varchar(40),storeId varchar(40),day int,month int,year int,category varchar(40),FootFallCount int);
+
+
+Racks
+create table Racks(id varchar(40),category_id varchar(40),beacon_id varchar(40));
+
+Categories
+create table Categories(id varchar(40),name varchar(40),description varchar(255));
+
+Racks
+r1,c2,b1
+r2,c3,b2
+r3,c1,b3
+r10,c56,b10
+
+Categories
+c1,dairy,d1
+c2,Clothing,d2
+c3,Footwears,d3
+c56,OTC Medicine,d56
+
+
+Allergen
+Create table Allergen(productId varchar(40),productName varchar(40),categoryId varchar(40));  //General Allergy
+p6,walnuts,c11
+p7,peanuts,c11
+
+
+Create table AllergenIndicators(productID varchar(40),productName varchar(40),categoryId(40));
+p10,OTC Inhaler,c56
+p11,OTC nose drops,c56
+
+
+create table userAllergen(userID varchar(40),allergicProductId varchar(40));// User Specific Allergy 
+																			//if(repeated buying medicine then allergic)
+																			
+																			
+create table userProfile(userId varchar(40),orgId varchar(40),storeId varchar(40),orderId varchar(40),productId varchar(40),quantity int,category varchar(40),day int,month int,year int);																		
