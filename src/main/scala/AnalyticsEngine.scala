@@ -96,8 +96,8 @@ object AnalyticsEngine{
                   }"""
 
 
-     val Value =  parse(js).extract[ParsedPage]
-     println(Value.domain)
+   //  val Value =  parse(js).extract[ParsedPage]
+    // println(Value.domain)
    	/*val spark = SparkSession
 				.builder
 				.master("local")

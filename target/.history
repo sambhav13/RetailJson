@@ -32,3 +32,8 @@ compile
 clear
 compile
 eclipse
+clean install
+clean
+compile
+eclipse
+clean
