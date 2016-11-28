@@ -38,3 +38,5 @@ compile
 eclipse
 clean
 eclipse
+compile
+eclipse

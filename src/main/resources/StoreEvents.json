@@ -40,8 +40,17 @@ create table DailyCategoryFootFallCount(day int,categoryId varchar(40),currentDa
 
 select * from DailyCategoryFootFallData
 
-
+//FootFallData
 {"eventType":"LocationEvent","Event":{"userId":"u2","orgId":"org1","storeId":"s1","rackId":"r2","time":"2016-11-11 11:13:10"}}
+{"eventType":"LocationEvent","Event":{"userId":"u2","orgId":"org1","storeId":"s1","rackId":"r4","time":"2016-11-11 15:13:10"}}
+
+
+//CheckOutData
+{"eventType":"CheckOutEvent","Event":{"userId":"u2","orgId":"org1","storeId":"s1","orderId":"o1","cart":[{"productId":"p4","quantity":2,"categoryId":"c1","price":10}],"checkOutTime":"2016-11-11 11:12:10"  }}
+{"eventType":"CheckOutEvent","Event":{"userId":"u3","orgId":"org1","storeId":"s1","orderId":"o2","cart":[{"productId":"p4","quantity":2,"categoryId":"c1","price":10}],"checkOutTime":"2016-11-11 12:12:10"  }}
+{"eventType":"CheckOutEvent","Event":{"userId":"u4","orgId":"org1","storeId":"s1","orderId":"o3","cart":[{"productId":"p7","quantity":1,"categoryId":"c3","price":10}],"checkOutTime":"2016-11-11 12:40:10"  }}
+
+
 
 {"eventType":"CheckOutEvent","Event":{"userId":"u2","orgId":"org1","storeId":"s1","orderId":"o1","cart":[{"productId":"p4","quantity":2,"categoryId":"c1","price":10},{"productId":"p1","quantity":1,"categoryId":"c2","price":12.4},{"productId":"p3","quantity":3,"categoryId":"c1","price":20}],"checkOutTime":"2016-11-11 11:12:10"  }}
 

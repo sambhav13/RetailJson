@@ -28,7 +28,7 @@ import org.apache.spark.sql.SaveMode
 @SerialVersionUID(100L)
 class EZAnalyticsEngine extends Serializable {
 
-	val props = new Properties();
+/*	val props = new Properties();
 
 	//val source = Source.fromURL(getClass.getResource("/jndi.properties"))
 
@@ -51,7 +51,7 @@ class EZAnalyticsEngine extends Serializable {
 
 			val chatTopic = jndi.lookup("MyTopic").asInstanceOf[Topic]
 
-					var publisher: TopicPublisher = pubSession.createPublisher(chatTopic)
+					var publisher: TopicPublisher = pubSession.createPublisher(chatTopic)*/
 }
 
 
@@ -79,6 +79,9 @@ case class LocationEvent(
 		val storeId:String,
 		val rackId:String,
 		val time:Timestamp)
+		
+		
+case class Event(msg:String)
 
 
 		//case class Event(data:String)
@@ -163,11 +166,23 @@ def main(args:Array[String]) = {
 			val ssc = new StreamingContext(sparkConf, Seconds(3))
 
 	val sqlContext = new SQLContext(ssc.sparkContext)
-	val lines = ssc.socketTextStream("localhost", 9999, StorageLevel.MEMORY_AND_DISK_SER)
-
-
+	//val lines = ssc.socketTextStream("localhost", 9999, StorageLevel.MEMORY_AND_DISK_SER)
+	val lines = ssc.socketTextStream("23.23.21.63", 9999, StorageLevel.MEMORY_AND_DISK_SER)
+	//val lines = ssc.socketTextStream("172.31.28.225", 9999, StorageLevel.MEMORY_AND_DISK_SER)
+   
+/*import sqlContext.implicits._
+	lines.foreachRDD(x =>{
+	  
+	  val df = x.map( o =>
+	          
+	      Event(o) 
+	      ).toDF()
+	      
+	      df.show()
+	  })*/
+	
 	//DB Connection Setup
-	val url = "jdbc:mysql://localhost:3306/test"
+	val url = "jdbc:mysql://localhost:3306/RetailEasyPass"
 	val table = "people";
 	import java.util.Properties
 	val prop = new Properties() 
@@ -177,14 +192,14 @@ def main(args:Array[String]) = {
 
 
 	//All the static data loading 
-	val dailyCategorySale = sqlContext.read.format("jdbc").option("url", "jdbc:mysql://localhost:3306/test")
+	val dailyCategorySale = sqlContext.read.format("jdbc").option("url", "jdbc:mysql://localhost:3306/RetailEasyPass")
 	.option("driver", "com.mysql.jdbc.Driver")
 	.option("dbtable", "DailyCategorySale")
 	.option("user", "root")
 	.option("password", "")
 	.load()
 
-	val dailyCategoryFootFall = sqlContext.read.format("jdbc").option("url", "jdbc:mysql://localhost:3306/test")
+	val dailyCategoryFootFall = sqlContext.read.format("jdbc").option("url", "jdbc:mysql://localhost:3306/RetailEasyPass")
 	.option("driver", "com.mysql.jdbc.Driver")
 	.option("dbtable", "DailyCategoryFootFall")
 	.option("user", "root")
@@ -192,14 +207,14 @@ def main(args:Array[String]) = {
 	.load()
 
 	
-	val racknCategory = sqlContext.read.format("jdbc").option("url", "jdbc:mysql://localhost:3306/test")
+	val racknCategory = sqlContext.read.format("jdbc").option("url", "jdbc:mysql://localhost:3306/RetailEasyPass")
 	.option("driver", "com.mysql.jdbc.Driver")
 	.option("dbtable", "Racks")
 	.option("user", "root")
 	.option("password", "")
 	.load()
 	
-	val Category = sqlContext.read.format("jdbc").option("url", "jdbc:mysql://localhost:3306/test")
+	val Category = sqlContext.read.format("jdbc").option("url", "jdbc:mysql://localhost:3306/RetailEasyPass")
 	.option("driver", "com.mysql.jdbc.Driver")
 	.option("dbtable", "Categories")
 	.option("user", "root")
@@ -211,7 +226,7 @@ def main(args:Array[String]) = {
 	rackIdCategory.show()
 
 	
-	val AllergenIndicators = sqlContext.read.format("jdbc").option("url", "jdbc:mysql://localhost:3306/test")
+	val AllergenIndicators = sqlContext.read.format("jdbc").option("url", "jdbc:mysql://localhost:3306/RetailEasyPass")
 	.option("driver", "com.mysql.jdbc.Driver")
 	.option("dbtable", "AllergenIndicators")
 	.option("user", "root")
@@ -288,19 +303,42 @@ def main(args:Array[String]) = {
 		
 		//Logic for Footfall based on filtering BeacondId(Entrance)
 		                                
-		import org.apache.spark.sql.functions.{array, lit, map, struct}
+	 
+		                                
+		import org.apache.spark.sql.functions.{array, lit, map, struct,sum}
 		val categoryFootFall  = FootFallStartDF.withColumn("day", dayUDF(LocationDF.col("time")))
 		                                  .withColumn("month", monthUDF(LocationDF.col("time")))
 		                                  .withColumn("year", yearUDF(LocationDF.col("time")))
 		                                  .withColumn("FootFall", lit(1))
-						.select("userId","orgId","storeId","day","month","year","category","FootFall")
+						//.select("userId","orgId","storeId","day","month","year","category","FootFall")
+						.select("orgId","storeId","day","month","year","category","FootFall")
+						
+						
+		val categoryFootFall_static = sqlContext.read.format("jdbc").option("url", "jdbc:mysql://localhost:3306/RetailEasyPass")
+	.option("driver", "com.mysql.jdbc.Driver")
+	.option("dbtable", "DailyCategoryFootFall")
+	.option("user", "root")
+	.option("password", "")
+	.load()			
+	
+	
+	val joinedCategoryFootFall = categoryFootFall.union(categoryFootFall_static)
+	
+	val aggregatedCategoryFootFall = joinedCategoryFootFall.groupBy("orgId","storeId","day","month","year","category")
+	                              .agg(sum(joinedCategoryFootFall("FootFall")).alias("FootFallCount"))
+	
+	                              
+// aggregatedCategoryFootFall.write.mode(SaveMode.Overwrite).jdbc(url,"DailyCategoryFootFallCount",prop)
+ 
+// categoryFootFall.write.mode(SaveMode.Append).jdbc(url,"DailyCategoryFootFall",prop)  
 
   //categoryFootFall.show()
 						
   
   
    import org.apache.spark.sql.functions._                         
-    //exploding the CheckOutEvent
+  
+   //exploding the CheckOutEvent
 		val CheckOutStartDF = CheckOutDF.withColumn("Products", explode(CheckOutDF("cart")))
 						                      .select("userId","orgId","storeId","orderId","checkOutTime","Products.productId","Products.quantity"
 						                              ,"Products.categoryId")
@@ -316,29 +354,107 @@ def main(args:Array[String]) = {
 		val categorySale  = CategorSaleStartDF.withColumn("day", dayUDF(CategorSaleStartDF.col("checkOutTime")))
 		                                  .withColumn("month", monthUDF(CategorSaleStartDF.col("checkOutTime")))
 		                                  .withColumn("year", yearUDF(CategorSaleStartDF.col("checkOutTime")))
-		                                  .withColumn("Sale", lit(1))
-						.select("userId","orgId","storeId","day","month","year","category","Sale")
+		                                  .withColumn("sale", lit(1))
+						//.select("userId","orgId","storeId","day","month","year","category","Sale")
+						.select("orgId","storeId","day","month","year","category","sale")
 						
+				
+		val categorySale_static = sqlContext.read.format("jdbc").option("url", "jdbc:mysql://localhost:3306/RetailEasyPass")
+	.option("driver", "com.mysql.jdbc.Driver")
+	.option("dbtable", "DailyCategorySale")
+	.option("user", "root")
+	.option("password", "")
+	.load()			
+	
+	
+	val joinedCategorySale = categorySale.union(categorySale_static)
+	
+	 val aggregatedCategorySale = joinedCategorySale.groupBy("orgId","storeId","day","month","year","category")
+	                              .agg(sum(joinedCategorySale("sale")).alias("saleCount")) 		
+		  
+	
+	                             
+	                              
+	aggregatedCategorySale.write.mode(SaveMode.Overwrite).jdbc(url,"DailyCategorySaleCount",prop)
+ 
+ categorySale.write.mode(SaveMode.Append).jdbc(url,"DailyCategorySale",prop)
 						
-		//categorySale.show()
+		categorySale.show()
 		
 		
 		
+   ////////
+   /// New Visitor/Repeat Visitor
+   ////////
+ 
+ 
+ val visits =  LocationDF.withColumn("day", dayUDF(LocationDF.col("time")))
+		                                  .withColumn("month", monthUDF(LocationDF.col("time")))
+		                                  .withColumn("year", yearUDF(LocationDF.col("time")))
+		                                  .withColumn("visitCount", lit(1))
+		                                  .drop("rackId","time")
+		                                  .select("orgId","storeId","day","month","year","userId","visitCount")
+ 
+val visits_static =  sqlContext.read.format("jdbc").option("url", "jdbc:mysql://localhost:3306/RetailEasyPass")
+	.option("driver", "com.mysql.jdbc.Driver")
+	.option("dbtable", "userVisit")
+	.option("user", "root")
+	.option("password", "")
+	.load()				
+	
+	val unionedVisit = visits.union(visits_static)
+		                                  
+   /** DailyLevel New/Repeat Visitors **/ 
+   
+		  val  dailyVisitDF =  unionedVisit.groupBy("orgId","storeId","day","month","year","userId")
+		                                    .agg(sum(unionedVisit("visitCount")).alias("VisitCount"))                      
+   	
+		  val dailyVisit_Repeat = dailyVisitDF.filter(dailyVisitDF("VisitCount").gt(1))
+		  val dailyVisit_New = dailyVisitDF.filter($"VisitCount" ===1)
+		  
+		  dailyVisit_Repeat.write.mode(SaveMode.Overwrite).jdbc(url,"dailyRepeatVisitors",prop)
+		  dailyVisit_New.write.mode(SaveMode.Overwrite).jdbc(url,"dailyNewVisitors",prop)
 		
+		  visits.write.mode(SaveMode.Append).jdbc(url,"userVisit",prop)
+		  
+		  dailyVisitDF.show()
+		  
+		  
+		  /** Monthly New/Repeat Visitors **/
+		  val  monthlyVisitDF =  unionedVisit.groupBy("orgId","storeId","month","year","userId")
+		                                    .agg(sum(unionedVisit("visitCount")).alias("VisitCount"))                      
+   	
+		  val monthlyVisit_Repeat = monthlyVisitDF.filter(monthlyVisitDF("VisitCount").gt(1))
+		  val monthlyVisit_New = monthlyVisitDF.filter($"VisitCount" ===1)
+		  
+		  monthlyVisit_Repeat.write.mode(SaveMode.Overwrite).jdbc(url,"monthlyRepeatVisitors",prop)
+		  monthlyVisit_New.write.mode(SaveMode.Overwrite).jdbc(url,"monthlyNewVisitors",prop)
 		
+		 	  
+		   /** Yearly New/Repeat Visitors **/
+		  val  yearlyVisitDF =  unionedVisit.groupBy("orgId","storeId","month","year","userId")
+		                                    .agg(sum(unionedVisit("visitCount")).alias("VisitCount"))                      
+   	
+		  val yearlyVisit_Repeat = yearlyVisitDF.filter(yearlyVisitDF("VisitCount").gt(1))
+		  val yearlyVisit_New = yearlyVisitDF.filter($"VisitCount" ===1)
+		  
+		  yearlyVisit_Repeat.write.mode(SaveMode.Overwrite).jdbc(url,"yearlyRepeatVisitors",prop)
+		  yearlyVisit_New.write.mode(SaveMode.Overwrite).jdbc(url,"yearlyNewVisitors",prop)
+		
+		  
 		///////////
 		
 		 //USER PROFILING
 		//////////
 		
-		
+		/*
 		val userProfile = CategorSaleStartDF
 		val timedUserProfile  = userProfile.withColumn("day", dayUDF(userProfile.col("checkOutTime")))
 		                                  .withColumn("month", monthUDF(userProfile.col("checkOutTime")))
 		                                  .withColumn("year", yearUDF(userProfile.col("checkOutTime")))
 		                                  .drop("checkOutTime")
 		             
-		val UserProfile =  sqlContext.read.format("jdbc").option("url", "jdbc:mysql://localhost:3306/test")
+		val UserProfile =  sqlContext.read.format("jdbc").option("url", "jdbc:mysql://localhost:3306/RetailEasyPass")
 	.option("driver", "com.mysql.jdbc.Driver")
 	.option("dbtable", "userProfile")
 	.option("user", "root")
@@ -389,7 +505,7 @@ def main(args:Array[String]) = {
 		//
 		timedUserProfile.write.mode(SaveMode.Append).jdbc(url,"userProfile",prop)
 		//timedUserProfile.show()
-
+		*/
 	})
 
 	ssc.start()
