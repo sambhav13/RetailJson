@@ -6,6 +6,11 @@ create table DailyCategorySale(orgId varchar(255),storeId varchar(255),day int,m
 create table DailyCategorySaleCount(orgId varchar(255),storeId varchar(255),day int,month int,year int,category varchar(255),saleCount int);
 
 
+DailyCategorySalePrice
+create table DailyCategorySalePrice(orgId varchar(255),storeId varchar(255),day int,month int,year int,category varchar(255),saleAmout double);
+create table DailyCategorySalePriceAgg(orgId varchar(255),storeId varchar(255),day int,month int,year int,category varchar(255),saleAmoutAgg double);
+
+
 DailyCategoryFootFall
 create table DailyCategoryFootFall(orgId varchar(255),storeId varchar(255),day int,month int,year int,category varchar(255),FootFall int);
 
@@ -70,9 +75,6 @@ create table userAllergen(userID varchar(255),allergicProductId varchar(255));
 																			
 																			
 create table userProfile(userId varchar(255),orgId varchar(255),storeId varchar(255),orderId varchar(255),productId varchar(255),quantity int,category varchar(255),day int,month int,year int);
-
-
-
 
 
 

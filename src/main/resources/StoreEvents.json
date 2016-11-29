@@ -50,7 +50,12 @@ select * from DailyCategoryFootFallData
 {"eventType":"CheckOutEvent","Event":{"userId":"u3","orgId":"org1","storeId":"s1","orderId":"o2","cart":[{"productId":"p4","quantity":2,"categoryId":"c1","price":10}],"checkOutTime":"2016-11-11 12:12:10"  }}
 {"eventType":"CheckOutEvent","Event":{"userId":"u4","orgId":"org1","storeId":"s1","orderId":"o3","cart":[{"productId":"p7","quantity":1,"categoryId":"c3","price":10}],"checkOutTime":"2016-11-11 12:40:10"  }}
 
+Hi Sakshi,
 
+I hope Sapient has decided what they can best offer to me .
+It has already been quite long and I was waiting for your call last weekend but didn't get it.
+
+If you can call me and we can have a final discussion. so that we can close this negotiation part quickly. 
 
 {"eventType":"CheckOutEvent","Event":{"userId":"u2","orgId":"org1","storeId":"s1","orderId":"o1","cart":[{"productId":"p4","quantity":2,"categoryId":"c1","price":10},{"productId":"p1","quantity":1,"categoryId":"c2","price":12.4},{"productId":"p3","quantity":3,"categoryId":"c1","price":20}],"checkOutTime":"2016-11-11 11:12:10"  }}
 

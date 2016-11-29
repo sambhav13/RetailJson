@@ -152,6 +152,11 @@ def timeYear(t1:Timestamp):Int = {
 	
       }
 		
+	
+	def TotalSalesByPrice(price:Double,quantity:Int):Double = {
+	  
+	  return (price*quantity)
+	}
 		
 
 def main(args:Array[String]) = {
@@ -167,10 +172,15 @@ def main(args:Array[String]) = {
 
 	val sqlContext = new SQLContext(ssc.sparkContext)
 	//val lines = ssc.socketTextStream("localhost", 9999, StorageLevel.MEMORY_AND_DISK_SER)
-	val lines = ssc.socketTextStream("23.23.21.63", 9999, StorageLevel.MEMORY_AND_DISK_SER)
+	//val lines = ssc.socketTextStream("23.23.21.63", 9999, StorageLevel.MEMORY_AND_DISK_SER)
 	//val lines = ssc.socketTextStream("172.31.28.225", 9999, StorageLevel.MEMORY_AND_DISK_SER)
+	val lines = ssc.socketTextStream("23.23.21.63", 9999, StorageLevel.MEMORY_AND_DISK_SER)
+	
+	// Assuming ssc is the StreamingContext
+//val lines = ssc.receiverStream(new CustomReceiver("23.23.21.63", 9999))
+//val words = lines.flatMap(_.split(" "))
    
-/*import sqlContext.implicits._
+import sqlContext.implicits._
 	lines.foreachRDD(x =>{
 	  
 	  val df = x.map( o =>
@@ -179,7 +189,7 @@ def main(args:Array[String]) = {
 	      ).toDF()
 	      
 	      df.show()
-	  })*/
+	  })
 	
 	//DB Connection Setup
 	val url = "jdbc:mysql://localhost:3306/RetailEasyPass"
@@ -286,6 +296,8 @@ def main(args:Array[String]) = {
 		val quarterUDF = udf(timeQuarter _ )
 		val yearUDF = udf(timeYear _ )
 		val allergyUDF = udf( AllergyCheck _ )
+		
+		val totalSalesUDF = udf(TotalSalesByPrice _)
 
 		
 		
@@ -338,10 +350,11 @@ def main(args:Array[String]) = {
   
    import org.apache.spark.sql.functions._                         
   
+   ///sale by total count
    //exploding the CheckOutEvent
 		val CheckOutStartDF = CheckOutDF.withColumn("Products", explode(CheckOutDF("cart")))
 						                      .select("userId","orgId","storeId","orderId","checkOutTime","Products.productId","Products.quantity"
-						                              ,"Products.categoryId")
+						                              ,"Products.categoryId","Products.price")
 						                              
 		//CheckOutStartDF.show()
 		val CategorSaleStartDF = CheckOutStartDF.join(rackIdCategory,CheckOutStartDF("categoryId")===rackIdCategory("category_id"))
@@ -375,14 +388,43 @@ def main(args:Array[String]) = {
 	
 	                             
 	                              
-	aggregatedCategorySale.write.mode(SaveMode.Overwrite).jdbc(url,"DailyCategorySaleCount",prop)
+	//aggregatedCategorySale.write.mode(SaveMode.Overwrite).jdbc(url,"DailyCategorySaleCount",prop)
  
- categorySale.write.mode(SaveMode.Append).jdbc(url,"DailyCategorySale",prop)
+ //categorySale.write.mode(SaveMode.Append).jdbc(url,"DailyCategorySale",prop)
 						
-		categorySale.show()
+	//	categorySale.show()
 		
 		
+		////Sale by total price
 		
+		
+	val categorySaleAmount =	CategorSaleStartDF.withColumn("day", dayUDF(CategorSaleStartDF.col("checkOutTime")))
+		                                  .withColumn("month", monthUDF(CategorSaleStartDF.col("checkOutTime")))
+		                                  .withColumn("year", yearUDF(CategorSaleStartDF.col("checkOutTime")))
+		                                  .withColumn("saleAmout", 
+		                                    totalSalesUDF(CategorSaleStartDF("price"),CategorSaleStartDF("quantity")))
+		                                   .select("orgId","storeId","day","month","year","category","saleAmount") 
+		                                    
+		val categorySaleAmount_static = sqlContext.read.format("jdbc").option("url", "jdbc:mysql://localhost:3306/RetailEasyPass")
+	.option("driver", "com.mysql.jdbc.Driver")
+	.option("dbtable", "DailyCategorySalePrice")
+	.option("user", "root")
+	.option("password", "")
+	.load()			
+	
+	
+	val joinedCategorySaleAmount = categorySaleAmount.union(categorySaleAmount_static)
+	
+	 val aggregatedCategorySaleAmount = joinedCategorySaleAmount.groupBy("orgId","storeId","day","month","year","category")
+	                              .agg(sum(joinedCategorySale("saleAmount")).alias("saleAmoutAgg")) 
+		                                   
+		   
+	
+	aggregatedCategorySaleAmount.write.mode(SaveMode.Overwrite).jdbc(url,"DailyCategorySalePriceAgg",prop)
+ 
+  categorySaleAmount.write.mode(SaveMode.Append).jdbc(url,"DailyCategorySalePrice",prop)
+
+		categorySaleAmount.show()
    ////////
    /// New Visitor/Repeat Visitor
    ////////
