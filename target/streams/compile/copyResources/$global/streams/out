@@ -1,0 +1,11 @@
+[0m[[0mdebug[0m] [0mCopy resource mappings: [0m
+[0m[[0mdebug[0m] [0m	(C:\Users\sambhav\Desktop\PythonClass\ScalaDStreams\RetailJson\src\main\resources\Allergen,C:\Users\sambhav\Desktop\PythonClass\ScalaDStreams\RetailJson\target\scala-2.11\classes\Allergen)[0m
+[0m[[0mdebug[0m] [0m	(C:\Users\sambhav\Desktop\PythonClass\ScalaDStreams\RetailJson\src\main\resources\application.conf,C:\Users\sambhav\Desktop\PythonClass\ScalaDStreams\RetailJson\target\scala-2.11\classes\application.conf)[0m
+[0m[[0mdebug[0m] [0m	(C:\Users\sambhav\Desktop\PythonClass\ScalaDStreams\RetailJson\src\main\resources\DbSchemaNew,C:\Users\sambhav\Desktop\PythonClass\ScalaDStreams\RetailJson\target\scala-2.11\classes\DbSchemaNew)[0m
+[0m[[0mdebug[0m] [0m	(C:\Users\sambhav\Desktop\PythonClass\ScalaDStreams\RetailJson\src\main\resources\DbScript.txt,C:\Users\sambhav\Desktop\PythonClass\ScalaDStreams\RetailJson\target\scala-2.11\classes\DbScript.txt)[0m
+[0m[[0mdebug[0m] [0m	(C:\Users\sambhav\Desktop\PythonClass\ScalaDStreams\RetailJson\src\main\resources\DbScriptNew.txt,C:\Users\sambhav\Desktop\PythonClass\ScalaDStreams\RetailJson\target\scala-2.11\classes\DbScriptNew.txt)[0m
+[0m[[0mdebug[0m] [0m	(C:\Users\sambhav\Desktop\PythonClass\ScalaDStreams\RetailJson\src\main\resources\jndi.properties,C:\Users\sambhav\Desktop\PythonClass\ScalaDStreams\RetailJson\target\scala-2.11\classes\jndi.properties)[0m
+[0m[[0mdebug[0m] [0m	(C:\Users\sambhav\Desktop\PythonClass\ScalaDStreams\RetailJson\src\main\resources\log4j.properties,C:\Users\sambhav\Desktop\PythonClass\ScalaDStreams\RetailJson\target\scala-2.11\classes\log4j.properties)[0m
+[0m[[0mdebug[0m] [0m	(C:\Users\sambhav\Desktop\PythonClass\ScalaDStreams\RetailJson\src\main\resources\RetailSchema.txt,C:\Users\sambhav\Desktop\PythonClass\ScalaDStreams\RetailJson\target\scala-2.11\classes\RetailSchema.txt)[0m
+[0m[[0mdebug[0m] [0m	(C:\Users\sambhav\Desktop\PythonClass\ScalaDStreams\RetailJson\src\main\resources\StoreEvents.json,C:\Users\sambhav\Desktop\PythonClass\ScalaDStreams\RetailJson\target\scala-2.11\classes\StoreEvents.json)[0m
+[0m[[0mdebug[0m] [0m	(C:\Users\sambhav\Desktop\PythonClass\ScalaDStreams\RetailJson\src\main\resources\VisualizationSchema,C:\Users\sambhav\Desktop\PythonClass\ScalaDStreams\RetailJson\target\scala-2.11\classes\VisualizationSchema)[0m

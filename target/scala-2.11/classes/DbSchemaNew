@@ -1,0 +1,22 @@
+CREATE TABLE `racks` (
+  `rackId` varchar(50) NOT NULL,
+  `storeId` varchar(50) NOT NULL,
+  `createdStamp` datetime NOT NULL,
+  PRIMARY KEY (`rackId`)
+ 
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+CREATE TABLE `category` (
+  `categoryId` int(10) NOT NULL,
+  `categoryName` varchar(100) NOT NULL,
+  `description` varchar(100) NOT NULL,
+  `rackId` varchar(50) NOT NULL,
+  `createdStamp` datetime NOT NULL,
+  PRIMARY KEY (`categoryId`)
+ 
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;  
+
+
+INSERT INTO `category` VALUES (1,'Lifestyle','Lifestyle products','RCK1','2016-11-28 00:00:00'); 
+INSERT INTO `racks` VALUES ('RCK1','LA_ST_001','2016-11-27 23:34:34'); 

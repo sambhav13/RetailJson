@@ -15,8 +15,14 @@ libraryDependencies += "net.liftweb" % "lift-json_2.11" % "3.0"
 libraryDependencies += "org.scalatra" % "scalatra_2.11" % "2.4.1"
 libraryDependencies += "org.scalatra" % "scalatra_2.11" % "2.4.1"
 libraryDependencies += "org.apache.activemq" % "activemq-core" % "5.5.0"
+libraryDependencies += "org.scalatest" % "scalatest_2.11" % "2.2.6"
+libraryDependencies += "com.holdenkarau" %% "spark-testing-base" % "2.0.0_0.4.7"
 
 
+
+javaOptions ++= Seq("-Xms512M", "-Xmx2048M", "-XX:MaxPermSize=2048M", "-XX:+CMSClassUnloadingEnabled")
+
+parallelExecution in Test := false
 
 mergeStrategy in assembly <<= (mergeStrategy in assembly) ((old) => {
   case x if Assembly.isConfigFile(x) =>

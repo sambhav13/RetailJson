@@ -1,0 +1,137 @@
+Hi All,
+ 
+                Following are the format for input and out for dashboard.
+ 
+EZPassout/api/store/trends/{day,month,year}
+ 
+Input JSON ==>
+{
+                "day":2,
+                "month":2,                                          //Feb
+                "year":2016
+}
+ 
+Output JSON==>
+{
+                "trends": {
+ 
+                                "sale": [{
+                                                "category": "clothes",
+                                                "sale": "4000",
+                                                "salePercent":"40.7%"
+                                                "rank": 1
+                                }, {
+                                                "category": "footwears",
+                                                "sale": "3000",
+                                                "salePercent":"30.7%"
+                                                "rank": 2
+                                }, {
+                                                "category": "sports",
+                                                "sale": "2000",
+                                                "salePercent":"20.7%"
+                                                "rank": 3
+                                }],
+ 
+                                "footfall": [{
+                                                "category": "clothes",
+                                                "footfall": "30",
+                                                "rank": 1
+                                }, {
+                                                "category": "footwears",
+                                                "footfall": "20",
+                                                "rank": 2
+                                }, {
+                                                "category": "sports",
+                                                "footfall": "15",
+                                                "rank": 3
+                                }]
+                }
+}
+ 
+==========================================================================
+ 
+EZPassout/api/store/footfall/{day,month,year}
+ 
+Input JSON ==>
+{
+                "day":2,
+                "month":2,                                          //Feb
+                "year":2016
+}
+ 
+Output JSON==>
+{
+                "footfall": [{
+                                "total": 50,
+                                "interested": 30,
+                                "converted": 20,
+                                "failed": 10
+                }]
+}
+ 
+==========================================================================
+ 
+EZPassout/api/store/salevsfootfall/{day,month,year}
+ 
+Input JSON ==>
+{
+                "day":2,
+                "month":2,                                         //Feb
+                "year":2016
+}
+ 
+ 
+Output JSON==>
+{
+                "timeLine": ["Day1", "Day2", "Day3", "Day4"],
+                "sale": [40, 30, 20, 10],
+                "salePercent": ["40%", "30%", "20%", "10%"],
+                "totalVisitors": [50, 30, 10, 5],
+                "newVisitors": [50, 30, 10, 5],
+                "newVisitorsPercent": ["40%", "30%", "20%", "10%"],
+                "oldVisitors": [30, 20, 5, 1],
+                "oldVisitorsPercent": ["40%", "30%", "20%", "10%"]
+}
+ 
+==========================================================================
+ 
+EZPassout/api/store/categories/salevsfootfall/{day,month,year}
+ 
+Input JSON ==>
+{
+                "day":2,
+                "month":2,                                          //Feb
+                "year":2016
+}
+ 
+Output JSON==>
+{
+                "categories": {
+                                "Clothes": {
+                                                "sale": "47000",
+                                                "salePercentage": "30",
+                                                "visitors": "50",
+                                                "visitorsPercent": "25",
+                                                "converted": "25",
+                                                "convertedPercent": "50",
+                                                "failed": "25",
+                                                "failedPercent": "50"
+ 
+                                },
+                                "Footwears": {
+                                                "sale": "47000",
+                                                "salePercentage": "30",
+                                                "visitors": "50",
+                                                "visitorsPercent": "25",
+                                                "converted": "25",
+                                                "convertedPercent": "50""
+                                                "failed": "25",
+                                                "failedPercent": "50"
+                                }
+                }
+}
+ 
+ 
+ 
+Regards,
+Deepak

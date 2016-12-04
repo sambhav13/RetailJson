@@ -1,0 +1,33 @@
+DailyCategorySale
+create table DailyCategorySale(orgId varchar(255),storeId varchar(255),day int,month int,year int,category varchar(255),sale int);
+
+create table DailyCategorySaleCount(orgId varchar(255),storeId varchar(255),day int,month int,year int,category varchar(255),saleCount int);
+
+
+DailyCategorySalePrice
+create table DailyCategorySalePrice(orgId varchar(255),storeId varchar(255),day int,month int,year int,category varchar(255),saleAmount double);
+create table DailyCategorySalePriceAgg(orgId varchar(255),storeId varchar(255),day int,month int,year int,category varchar(255),saleAmountAgg double);
+
+
+DailyCategoryFootFall
+create table DailyCategoryFootFall(orgId varchar(255),storeId varchar(255),day int,month int,year int,category varchar(255),FootFall int);
+
+create table DailyCategoryFootFallCount(orgId varchar(255),storeId varchar(255),day int,month int,year int,category varchar(255),FootFallCount int);
+
+
+#New Visitors/Repeat Visitors FootFall
+
+create table userVisit(orgId varchar(255),storeId varchar(255),day int,month int,year int,userId varchar(255),visitCount int);
+
+create table dailyRepeatVisitors(orgId varchar(255),storeId varchar(255),day int,month int,year int,repeatUserId varchar(255),visitCount int);
+create table dailyNewVisitors(orgId varchar(255),storeId varchar(255),day int,month int,year int,newUserId varchar(255),visitCount int);
+
+create table monthlyRepeatVisitors(orgId varchar(255),storeId varchar(255),month int,year int,repeatUserId varchar(255),visitCount int);
+create table monthlyNewVisitors(orgId varchar(255),storeId varchar(255),month int,year int,newUserId varchar(255),visitCount int);
+																		
+																		
+create table yearlyRepeatVisitors(orgId varchar(255),storeId varchar(255),year int,repeatUserId varchar(255),visitCount int);
+create table yearlyNewVisitors(orgId varchar(255),storeId varchar(255),year int,newUserId varchar(255),visitCount int);
+
+
+ALTER TABLE  DailyCategorySalePrice CHANGE saleAmout saleAmount double ;

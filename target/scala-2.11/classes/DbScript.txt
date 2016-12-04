@@ -1,0 +1,128 @@
+
+
+DailyCategorySale
+create table DailyCategorySale(orgId varchar(255),storeId varchar(255),day int,month int,year int,category varchar(255),sale int);
+
+create table DailyCategorySaleCount(orgId varchar(255),storeId varchar(255),day int,month int,year int,category varchar(255),saleCount int);
+
+
+DailyCategorySalePrice
+create table DailyCategorySalePrice(orgId varchar(255),storeId varchar(255),day int,month int,year int,category varchar(255),saleAmout double);
+create table DailyCategorySalePriceAgg(orgId varchar(255),storeId varchar(255),day int,month int,year int,category varchar(255),saleAmoutAgg double);
+
+
+DailyCategoryFootFall
+create table DailyCategoryFootFall(orgId varchar(255),storeId varchar(255),day int,month int,year int,category varchar(255),FootFall int);
+
+create table DailyCategoryFootFallCount(orgId varchar(255),storeId varchar(255),day int,month int,year int,category varchar(255),FootFallCount int);
+
+
+Racks
+create table Racks(id varchar(255),category_id varchar(255),beacon_id varchar(255));
+
+
+Categories
+create table Categories(id varchar(255),name varchar(255),description varchar(255));
+
+Racks
+r1,c2,b1
+r2,c3,b2
+r3,c1,b3
+r10,c56,b10
+
+insert into Racks values('r1','c2','b1');
+insert into Racks values('r2','c3','b2');
+insert into Racks values('r3','c1','b3');
+insert into Racks values('r10','c56','b10');
+
+
+
+Categories
+c1,dairy,d1
+c2,Clothing,d2
+c3,Footwears,d3
+c56,OTC Medicine,d56
+
+
+insert into Categories values('c1','dairy','d1');
+insert into Categories values('c2','Clothing','d2');
+insert into Categories values('c3','Footwears','d3');
+insert into Categories values('c56','OTC Medicine','d56');
+
+
+Allergen
+Create table Allergen(productId varchar(255),productName varchar(255),categoryId varchar(255));  //General Allergy
+p6,walnuts,c11
+p7,peanuts,c11
+
+insert into Allergen values('p6','walnuts','c11');
+insert into Allergen values('p7','peanuts','c11');
+
+
+
+
+Create table AllergenIndicators(productID varchar(255),productName varchar(255),categoryId varchar(255));
+p10,OTC Inhaler,c56
+p11,OTC nose drops,c56
+
+insert into AllergenIndicators values('p10','OTC Inhaler','c56');
+insert into AllergenIndicators values('p11','OTC node drops','c56');
+
+
+create table userAllergen(userID varchar(255),allergicProductId varchar(255));
+// User Specific Allergy 
+																			//if(repeated buying medicine then allergic)
+																			
+																			
+create table userProfile(userId varchar(255),orgId varchar(255),storeId varchar(255),orderId varchar(255),productId varchar(255),quantity int,category varchar(255),day int,month int,year int);
+
+
+
+
+#New Visitors/Repeat Visitors FootFall
+
+create table userVisit(orgId varchar(255),storeId varchar(255),day int,month int,year int,userId varchar(255),visitCount int);
+
+
+create table dailyRepeatVisitors(orgId varchar(255),storeId varchar(255),day int,month int,year int,repeatUserId varchar(255),visitCount int);
+create table dailyNewVisitors(orgId varchar(255),storeId varchar(255),day int,month int,year int,newUserId varchar(255),visitCount int);
+
+create table monthlyRepeatVisitors(orgId varchar(255),storeId varchar(255),month int,year int,repeatUserId varchar(255),visitCount int);
+create table monthlyNewVisitors(orgId varchar(255),storeId varchar(255),month int,year int,newUserId varchar(255),visitCount int);
+																		
+																		
+create table yearlyRepeatVisitors(orgId varchar(255),storeId varchar(255),year int,repeatUserId varchar(255),visitCount int);
+create table yearlyNewVisitors(orgId varchar(255),storeId varchar(255),year int,newUserId varchar(255),visitCount int);
+
+
+
+
+
+#####
+Droppin tables;
+
+drop table Allergen;
+drop table AllergenIndicators;
+drop table Categories;
+drop table DailyCategoryFootFall;
+drop table DailyCategoryFootFallCount;
+drop table DailyCategorySale;
+drop table DailyCategorySaleCount;
+drop table Racks;
+drop table userAllergen;	
+drop table userProfile;
+
+
+{
+		   "eventType":"LocationEvent",
+			"event":   {
+				  "eventId":"1",
+                  "userId":"u1",
+                  "orgId":"org1",
+                  "storeId":"s1",
+                  "rackId":"r1",
+				  "type":0,
+                  "createdStamp":"2016-11-11 11:10:10"
+ 
+			}	
+		} 																	

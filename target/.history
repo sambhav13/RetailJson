@@ -40,3 +40,30 @@ clean
 eclipse
 compile
 eclipse
+compile
+eclipse
+test
+compile
+eclipse
+test
+compile
+run:test
+test:TestSpark
+test
+testOnly *MySuite -- -z TestSpark
+testOnly *MySuite -- -t TestSpark
+test:test-only TestSpark
+compile
+eclipse
+compile
+sbt tun
+sbt run
+run
+twst-quick
+test-quick
+show:test-classpth
+show:test-classpath
+show test:full-classpath
+show test:classpath
+compile
+eclipse
